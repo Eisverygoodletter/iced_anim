@@ -118,7 +118,7 @@ impl canvas::Program<Message> for AppState {
         event: canvas::Event,
         _bounds: Rectangle,
         _cursor: Cursor,
-    ) -> (canvas::event::Status, Option<Message>) {
+    ) -> Option<iced::widget::Action<Message>> {// (iced::event::Status, Option<Message>) {
         match event {
             canvas::Event::Mouse(mouse::Event::CursorMoved { position }) => {
                 let Some(index) = self
@@ -126,20 +126,23 @@ impl canvas::Program<Message> for AppState {
                     .iter()
                     .position(|shape| shape.contains(position))
                 else {
-                    return (canvas::event::Status::Ignored, None);
+                    return None;
+                    // return (canvas::event::Status::Ignored, None);
                 };
 
                 // Don't update the selection if it hasn't changed
                 if index == self.hovered_index {
-                    return (canvas::event::Status::Ignored, None);
+                    return None;
+                    // return (canvas::event::Status::Ignored, None);
                 }
-
-                (
-                    canvas::event::Status::Captured,
-                    Some(Message::SelectIndex(index)),
-                )
+                Some(iced::widget::Action::publish(Message::SelectIndex(index)))
+                // (
+                //     canvas::event::Status::Captured,
+                //     Some(Message::SelectIndex(index)),
+                // )
             }
-            _ => (canvas::event::Status::Ignored, None),
+            _ => None,
+            // _ => (canvas::event::Status::Ignored, None),
         }
     }
 }

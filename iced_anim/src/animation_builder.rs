@@ -294,7 +294,7 @@ where
         )
     }
 
-    fn on_event(
+    fn update(
         &mut self,
         tree: &mut Tree,
         event: iced::Event,
@@ -304,8 +304,8 @@ where
         clipboard: &mut dyn iced::advanced::Clipboard,
         shell: &mut iced::advanced::Shell<'_, Message>,
         viewport: &iced::Rectangle,
-    ) -> event::Status {
-        let status = self.cached_element.as_widget_mut().on_event(
+    ) -> () {//iced::advanced::graphics::core::event::Status {
+        let status = self.cached_element.as_widget_mut().update(
             &mut tree.children[0],
             event.clone(),
             layout,
@@ -324,7 +324,8 @@ where
 
         // Request a redraw if the spring has remaining energy
         if state.animation.is_animating() {
-            shell.request_redraw(iced::window::RedrawRequest::NextFrame);
+            // shell.request_redraw(iced::window::RedrawRequest::NextFrame);
+            shell.request_redraw();
             // Only invalidate the layout if the user indicates to do so
             if self.animates_layout {
                 shell.invalidate_layout();

@@ -203,7 +203,7 @@ where
         )
     }
 
-    fn on_event(
+    fn update(
         &mut self,
         tree: &mut iced::advanced::widget::Tree,
         event: iced::Event,
@@ -213,8 +213,8 @@ where
         clipboard: &mut dyn iced::advanced::Clipboard,
         shell: &mut iced::advanced::Shell<'_, Message>,
         viewport: &iced::Rectangle,
-    ) -> iced::advanced::graphics::core::event::Status {
-        let status = self.content.as_widget_mut().on_event(
+    ) -> () {//iced::advanced::graphics::core::event::Status {
+        let status = self.content.as_widget_mut().update(
             &mut tree.children[0],
             event.clone(),
             layout,

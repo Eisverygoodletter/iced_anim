@@ -250,7 +250,7 @@ where
         });
     }
 
-    fn on_event(
+    fn update(
         &mut self,
         tree: &mut Tree,
         event: Event,
@@ -260,8 +260,8 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
-    ) -> event::Status {
-        if let event::Status::Captured = self.content.as_widget_mut().on_event(
+    ) -> () {
+        self.content.as_widget_mut().update(
             &mut tree.children[0],
             event.clone(),
             layout.children().next().unwrap(),
@@ -270,9 +270,7 @@ where
             clipboard,
             shell,
             viewport,
-        ) {
-            return event::Status::Captured;
-        }
+        );
 
         // Redraw anytime the status changes and would trigger a style change.
         let state = tree.state.downcast_mut::<State>();
@@ -280,7 +278,8 @@ where
         let needs_redraw = state.animated_state.needs_redraw(status);
 
         if needs_redraw {
-            shell.request_redraw(window::RedrawRequest::NextFrame);
+            shell.request_redraw();
+            // shell.request_redraw(window::RedrawRequest::NextFrame);
         }
 
         match event {
@@ -296,9 +295,11 @@ where
                         let state = tree.state.downcast_mut::<State>();
 
                         state.is_pressed = true;
-                        shell.request_redraw(window::RedrawRequest::NextFrame);
+                        shell.request_redraw();
+                        // shell.request_redraw(window::RedrawRequest::NextFrame);
 
-                        return event::Status::Captured;
+                        // return event::Status::Captured;
+                        shell.capture_event();
                     }
                 }
             }
@@ -309,7 +310,8 @@ where
 
                     if state.is_pressed {
                         state.is_pressed = false;
-                        shell.request_redraw(window::RedrawRequest::NextFrame);
+                        shell.request_redraw();
+                        // shell.request_redraw(window::RedrawRequest::NextFrame);
 
                         let bounds = layout.bounds();
 
@@ -317,20 +319,20 @@ where
                             shell.publish(on_press);
                         }
 
-                        return event::Status::Captured;
+                        // return event::Status::Captured;
+                        shell.capture_event();
                     }
                 }
             }
             Event::Touch(touch::Event::FingerLost { .. }) => {
                 let state = tree.state.downcast_mut::<State>();
-                shell.request_redraw(window::RedrawRequest::NextFrame);
-
+                // shell.request_redraw(window::RedrawRequest::NextFrame);
+                shell.request_redraw();
                 state.is_pressed = false;
             }
             _ => {}
         }
-
-        event::Status::Ignored
+        // event::Status::Ignored
     }
 
     fn draw(
